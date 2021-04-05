@@ -25,12 +25,14 @@ namespace Tucil3_AStar
             line = readFile.ReadLine();
             int lineCount = Convert.ToInt32(line); // konversi line pertama menjadi integer;
             Console.WriteLine(lineCount);
+            readFile.ReadLine();
             for (int i = 0; i < lineCount; i++)
             {
                 line = readFile.ReadLine();
                 var arr = line.Split(new[] { ' ' });
                 this.nodelist.Add(new Node(arr[0], new Tuple<double, double>(Convert.ToDouble(arr[1]), Convert.ToDouble(arr[2]))));
             }
+            readFile.ReadLine();
             this.g = new Graph(this.nodelist);
             for (int i = 0; i < lineCount; i++)
             {

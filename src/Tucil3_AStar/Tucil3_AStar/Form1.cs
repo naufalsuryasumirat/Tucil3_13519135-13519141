@@ -235,6 +235,14 @@ namespace Tucil3_AStar
             if (initialNode == null || goalNode == null) return;
             var Result = OG.AStar(initialNode, goalNode);
             AnimatePath(this.GDraw, Result.Item1, this.gViewer1);
+            lbl_Content.Text = "Penelusuran dengan Algoritma A*\n";
+            for (int i = 0; i < Result.Item1.Count; i++)
+            {
+                lbl_Content.Text += Result.Item1[i];
+                if (i == Result.Item1.Count - 1) lbl_Content.Text += ".\n";
+                else lbl_Content.Text += " → ";
+            }
+            lbl_Content.Text += ("Distance: " + Result.Item2 + "\n");
         }
     }
 }
