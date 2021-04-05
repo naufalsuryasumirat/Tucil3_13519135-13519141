@@ -29,9 +29,10 @@ namespace Tucil3_AStar
         /// </summary>
         private void InitializeComponent()
         {
-            Microsoft.Msagl.Core.Geometry.Curves.PlaneTransformation planeTransformation2 = new Microsoft.Msagl.Core.Geometry.Curves.PlaneTransformation();
+            Microsoft.Msagl.Core.Geometry.Curves.PlaneTransformation planeTransformation5 = new Microsoft.Msagl.Core.Geometry.Curves.PlaneTransformation();
             this.gViewer1 = new Microsoft.Msagl.GraphViewerGdi.GViewer();
             this.pnl_SideMenu = new System.Windows.Forms.Panel();
+            this.btn_FindPath = new System.Windows.Forms.Button();
             this.cmb_Goal = new System.Windows.Forms.ComboBox();
             this.btn_Goal = new System.Windows.Forms.Button();
             this.btn_Reset = new System.Windows.Forms.Button();
@@ -48,7 +49,10 @@ namespace Tucil3_AStar
             this.lbl_Content = new System.Windows.Forms.Label();
             this.pnl_Filename = new System.Windows.Forms.Panel();
             this.lbl_FileName = new System.Windows.Forms.Label();
-            this.btn_FindPath = new System.Windows.Forms.Button();
+            this.gMap = new GMap.NET.WindowsForms.GMapControl();
+            this.btn_MapOnly = new System.Windows.Forms.Button();
+            this.lbl_Info1 = new System.Windows.Forms.Label();
+            this.lbl_Info2 = new System.Windows.Forms.Label();
             this.pnl_SideMenu.SuspendLayout();
             this.pnl_Logo.SuspendLayout();
             this.pnl_Bottom.SuspendLayout();
@@ -90,7 +94,7 @@ namespace Tucil3_AStar
             this.gViewer1.TabIndex = 1;
             this.gViewer1.TightOffsetForRouting = 0.125D;
             this.gViewer1.ToolBarIsVisible = true;
-            this.gViewer1.Transform = planeTransformation2;
+            this.gViewer1.Transform = planeTransformation5;
             this.gViewer1.UndoRedoButtonsVisible = true;
             this.gViewer1.WindowZoomButtonPressed = false;
             this.gViewer1.ZoomF = 1D;
@@ -101,6 +105,7 @@ namespace Tucil3_AStar
             // 
             this.pnl_SideMenu.AutoScroll = true;
             this.pnl_SideMenu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(71)))), ((int)(((byte)(90)))));
+            this.pnl_SideMenu.Controls.Add(this.btn_MapOnly);
             this.pnl_SideMenu.Controls.Add(this.btn_FindPath);
             this.pnl_SideMenu.Controls.Add(this.cmb_Goal);
             this.pnl_SideMenu.Controls.Add(this.btn_Goal);
@@ -116,6 +121,21 @@ namespace Tucil3_AStar
             this.pnl_SideMenu.Name = "pnl_SideMenu";
             this.pnl_SideMenu.Size = new System.Drawing.Size(200, 1041);
             this.pnl_SideMenu.TabIndex = 0;
+            // 
+            // btn_FindPath
+            // 
+            this.btn_FindPath.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(42)))), ((int)(((byte)(54)))));
+            this.btn_FindPath.Dock = System.Windows.Forms.DockStyle.Top;
+            this.btn_FindPath.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_FindPath.Font = new System.Drawing.Font("Nirmala UI", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_FindPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(121)))), ((int)(((byte)(198)))));
+            this.btn_FindPath.Location = new System.Drawing.Point(0, 243);
+            this.btn_FindPath.Name = "btn_FindPath";
+            this.btn_FindPath.Size = new System.Drawing.Size(200, 54);
+            this.btn_FindPath.TabIndex = 12;
+            this.btn_FindPath.Text = "Find Path";
+            this.btn_FindPath.UseVisualStyleBackColor = false;
+            this.btn_FindPath.Click += new System.EventHandler(this.btn_FindPath_Click);
             // 
             // cmb_Goal
             // 
@@ -286,6 +306,9 @@ namespace Tucil3_AStar
             // pnl_Main
             // 
             this.pnl_Main.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(42)))), ((int)(((byte)(54)))));
+            this.pnl_Main.Controls.Add(this.lbl_Info2);
+            this.pnl_Main.Controls.Add(this.gMap);
+            this.pnl_Main.Controls.Add(this.lbl_Info1);
             this.pnl_Main.Controls.Add(this.lbl_Content);
             this.pnl_Main.Controls.Add(this.gViewer1);
             this.pnl_Main.Controls.Add(this.pnl_Filename);
@@ -297,11 +320,11 @@ namespace Tucil3_AStar
             // 
             // lbl_Content
             // 
-            this.lbl_Content.Font = new System.Drawing.Font("LEMON MILK", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_Content.Font = new System.Drawing.Font("LEMON MILK", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_Content.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(121)))), ((int)(((byte)(198)))));
             this.lbl_Content.Location = new System.Drawing.Point(19, 83);
             this.lbl_Content.Name = "lbl_Content";
-            this.lbl_Content.Size = new System.Drawing.Size(734, 864);
+            this.lbl_Content.Size = new System.Drawing.Size(734, 289);
             this.lbl_Content.TabIndex = 2;
             // 
             // pnl_Filename
@@ -325,20 +348,73 @@ namespace Tucil3_AStar
             this.lbl_FileName.Text = "File Name: ";
             this.lbl_FileName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // btn_FindPath
+            // gMap
             // 
-            this.btn_FindPath.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(42)))), ((int)(((byte)(54)))));
-            this.btn_FindPath.Dock = System.Windows.Forms.DockStyle.Top;
-            this.btn_FindPath.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btn_FindPath.Font = new System.Drawing.Font("Nirmala UI", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_FindPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(121)))), ((int)(((byte)(198)))));
-            this.btn_FindPath.Location = new System.Drawing.Point(0, 243);
-            this.btn_FindPath.Name = "btn_FindPath";
-            this.btn_FindPath.Size = new System.Drawing.Size(200, 54);
-            this.btn_FindPath.TabIndex = 12;
-            this.btn_FindPath.Text = "Find Path";
-            this.btn_FindPath.UseVisualStyleBackColor = false;
-            this.btn_FindPath.Click += new System.EventHandler(this.btn_FindPath_Click);
+            this.gMap.Bearing = 0F;
+            this.gMap.CanDragMap = true;
+            this.gMap.EmptyTileColor = System.Drawing.Color.Navy;
+            this.gMap.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.gMap.GrayScaleMode = false;
+            this.gMap.HelperLineOption = GMap.NET.WindowsForms.HelperLineOptions.DontShow;
+            this.gMap.LevelsKeepInMemory = 5;
+            this.gMap.Location = new System.Drawing.Point(0, 459);
+            this.gMap.MarkersEnabled = true;
+            this.gMap.MaxZoom = 2;
+            this.gMap.MinZoom = 2;
+            this.gMap.MouseWheelZoomEnabled = true;
+            this.gMap.MouseWheelZoomType = GMap.NET.MouseWheelZoomType.MousePositionAndCenter;
+            this.gMap.Name = "gMap";
+            this.gMap.NegativeMode = false;
+            this.gMap.PolygonsEnabled = true;
+            this.gMap.RetryLoadTile = 0;
+            this.gMap.RoutesEnabled = true;
+            this.gMap.ScaleMode = GMap.NET.WindowsForms.ScaleModes.Integer;
+            this.gMap.SelectedAreaFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(65)))), ((int)(((byte)(105)))), ((int)(((byte)(225)))));
+            this.gMap.ShowTileGridLines = false;
+            this.gMap.Size = new System.Drawing.Size(791, 516);
+            this.gMap.TabIndex = 13;
+            this.gMap.Zoom = 0D;
+            this.gMap.OnMarkerClick += new GMap.NET.WindowsForms.MarkerClick(this.gMap_OnMarkerClick);
+            this.gMap.OnMarkerDoubleClick += new GMap.NET.WindowsForms.MarkerDoubleClick(this.gMap_OnMarkerDoubleClick);
+            this.gMap.Load += new System.EventHandler(this.gMap_Load);
+            // 
+            // btn_MapOnly
+            // 
+            this.btn_MapOnly.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(42)))), ((int)(((byte)(54)))));
+            this.btn_MapOnly.Dock = System.Windows.Forms.DockStyle.Top;
+            this.btn_MapOnly.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_MapOnly.Font = new System.Drawing.Font("Nirmala UI", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_MapOnly.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(121)))), ((int)(((byte)(198)))));
+            this.btn_MapOnly.Location = new System.Drawing.Point(0, 297);
+            this.btn_MapOnly.Name = "btn_MapOnly";
+            this.btn_MapOnly.Size = new System.Drawing.Size(200, 54);
+            this.btn_MapOnly.TabIndex = 13;
+            this.btn_MapOnly.Text = "Use Map Only";
+            this.btn_MapOnly.UseVisualStyleBackColor = false;
+            this.btn_MapOnly.Click += new System.EventHandler(this.btn_MapOnly_Click);
+            // 
+            // lbl_Info1
+            // 
+            this.lbl_Info1.AutoSize = true;
+            this.lbl_Info1.Font = new System.Drawing.Font("Nirmala UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_Info1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(121)))), ((int)(((byte)(198)))));
+            this.lbl_Info1.Location = new System.Drawing.Point(3, 372);
+            this.lbl_Info1.Name = "lbl_Info1";
+            this.lbl_Info1.Size = new System.Drawing.Size(389, 84);
+            this.lbl_Info1.TabIndex = 4;
+            this.lbl_Info1.Text = "GMap Controls:\r\n- Right Click Anywhere to Add Marker (Add Node)\r\n- Double Click T" +
+    "wo Markers to Add Connection\r\n- Middle Click Two Markers to Animate Path";
+            // 
+            // lbl_Info2
+            // 
+            this.lbl_Info2.AutoSize = true;
+            this.lbl_Info2.Font = new System.Drawing.Font("Nirmala UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_Info2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(121)))), ((int)(((byte)(198)))));
+            this.lbl_Info2.Location = new System.Drawing.Point(388, 372);
+            this.lbl_Info2.Name = "lbl_Info2";
+            this.lbl_Info2.Size = new System.Drawing.Size(352, 63);
+            this.lbl_Info2.TabIndex = 5;
+            this.lbl_Info2.Text = "\r\n- Left Click and Drag to Pan the Map\r\n- Use MouseWheel to Zoom in and Zoom out";
             // 
             // Form1
             // 
@@ -358,6 +434,7 @@ namespace Tucil3_AStar
             this.pnl_Logo.ResumeLayout(false);
             this.pnl_Bottom.ResumeLayout(false);
             this.pnl_Main.ResumeLayout(false);
+            this.pnl_Main.PerformLayout();
             this.pnl_Filename.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -383,6 +460,10 @@ namespace Tucil3_AStar
         private System.Windows.Forms.ComboBox cmb_Goal;
         private System.Windows.Forms.Button btn_Goal;
         private System.Windows.Forms.Button btn_FindPath;
+        private GMap.NET.WindowsForms.GMapControl gMap;
+        private System.Windows.Forms.Button btn_MapOnly;
+        private System.Windows.Forms.Label lbl_Info2;
+        private System.Windows.Forms.Label lbl_Info1;
     }
 }
 

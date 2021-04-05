@@ -30,7 +30,7 @@ namespace Tucil3_AStar
         }
         public void addConnection(int from, int to)
         {
-            if ((from > this.nodes.Count || from < 0) || (to > this.nodes.Count || to < 0)) return;
+            if ((from > this.nodes.Count || from < 0) || (to > this.nodes.Count || to < 0) || (from == to)) return;
             var t1 = new Tuple<string, string, double>(nodes[from].getName(), nodes[to].getName(), nodes[from].calcHaversine(nodes[to]));
             var t2 = new Tuple<string, string, double>(t1.Item2, t1.Item1, t1.Item3);
             if (!this.DrawInfo.Contains(t1) && !this.DrawInfo.Contains(t2)) { this.DrawInfo.Add(t1); }
@@ -40,6 +40,7 @@ namespace Tucil3_AStar
         {
             if (findNode(node.getName()) != null) return;
             this.nodes.Add(node);
+            this.DrawInfo.Add(new Tuple<string, string, double>(node.getName(), null, 0.0));
         }
         public Node findNode(string name)
         {
@@ -119,6 +120,14 @@ namespace Tucil3_AStar
                 }
             }
             return null; // Tidak ditemukan path
+        }
+        public int findIndexWithCoor(double latitude, double longitude)
+        {
+            for (int i = 0; i < this.nodes.Count; i++)
+            {
+                if (nodes[i].getLatitude() == latitude && nodes[i].getLongitude() == longitude) return i;
+            }
+            return -1;
         }
     }
 }
