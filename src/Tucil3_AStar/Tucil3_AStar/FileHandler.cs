@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Globalization;
 
 namespace Tucil3_AStar
 {
@@ -23,14 +24,16 @@ namespace Tucil3_AStar
             string line;
             var readFile = new StreamReader(path);
             line = readFile.ReadLine();
-            int lineCount = Convert.ToInt32(line); // konversi line pertama menjadi integer;
+            int lineCount = int.Parse(line); // konversi line pertama menjadi integer;
             Console.WriteLine(lineCount);
             readFile.ReadLine();
             for (int i = 0; i < lineCount; i++)
             {
                 line = readFile.ReadLine();
                 var arr = line.Split(new[] { ' ' });
-                this.nodelist.Add(new Node(arr[0], new Tuple<double, double>(Convert.ToDouble(arr[1]), Convert.ToDouble(arr[2]))));
+                double latitude = double.Parse(arr[1], CultureInfo.InvariantCulture);
+                double longitude = double.Parse(arr[2], CultureInfo.InvariantCulture);
+                this.nodelist.Add(new Node(arr[0], new Tuple<double, double>(latitude, longitude)));
             }
             readFile.ReadLine();
             this.g = new Graph(this.nodelist);
@@ -40,7 +43,7 @@ namespace Tucil3_AStar
                 var arr = line.Split(new[] { ' ' });
                 for (int j = 0; j < arr.Length; j++)
                 {
-                    if (Convert.ToInt32(arr[j]) == 0) continue;
+                    if (int.Parse(arr[j]) == 0) continue;
                     else g.addConnection(i, j);
                 }
             }
