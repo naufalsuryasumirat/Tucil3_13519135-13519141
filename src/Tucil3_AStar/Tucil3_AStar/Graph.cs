@@ -74,8 +74,11 @@ namespace Tucil3_AStar
             }
         }
         // Algoritma AStar yang digunakan untuk mencari jalur terpendek antar dua node yang terdapat pada Graph
+        // Menggunakan List of List of Nodes (merepresentasikan jalur) yang diurutkan dan diperilakukan seperti PriorityQueue berdasarkan cost
+        // Yang dihitung/diperkirakan menggunakan F(n) heuristic evaluation function (jarak dari awal node ditambah dengan prediksi jarak ke node tujuan)
+        // Prediksi jarak ke node tujuan menggunakan Formula Haversine untuk menghitung jarak antar dua koordinat (latitude dan longitude) di bumi
+        // Bekerja dengan mengambil node terakhir dari list of nodes pada tuple dan meng-eksplore node tetangganya dan menambahkannya sebagai jalur pada PriorityQueue tersebut setelah dihitung cost perkiraannya
         public Tuple<List<string>, double, double> AStar(string from, string to)
-        
         {
             Node GoalNode = findNode(to);
             Node InitialNode = findNode(from);
@@ -93,17 +96,6 @@ namespace Tucil3_AStar
                 {
                     List<string> toReturn = new List<string>();
                     foreach (var node in Head.Item1) { toReturn.Add(node.getName()); }
-                    foreach (var test in PQueue) // TEST
-                    {
-                        Console.Write("Path\t: ");
-                        foreach (var test2 in test.Item1)
-                        {
-                            Console.Write(test2.getName() + ", ");
-                        }
-                        Console.WriteLine();
-                        Console.WriteLine("DSF\t: " + test.Item2);
-                        Console.WriteLine("Cost\t: " + test.Item3);
-                    }; // ends here
                     PQueue.Clear();
                     return new Tuple<List<string>, double, double>(toReturn, Head.Item2, Head.Item3);
                 }

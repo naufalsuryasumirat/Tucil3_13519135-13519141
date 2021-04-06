@@ -12,7 +12,7 @@ namespace Tucil3_AStar
 {
     public partial class Form1 : Form
     {
-        class ItemCombo // Kelas untuk form pilihan akun/find friend
+        class ItemCombo // Kelas untuk form pilihan node
         {
             public ItemCombo() { }
             public string Value { set; get; }

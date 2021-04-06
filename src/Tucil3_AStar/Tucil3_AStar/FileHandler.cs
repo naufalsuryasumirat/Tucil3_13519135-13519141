@@ -52,4 +52,3 @@ namespace Tucil3_AStar
         }
     }
 }
-
