@@ -1,6 +1,7 @@
 # Tucil3_13519135-13519141
 
 Naufal Alexander Suryasumirat - 13519135 K03
+
 Naufal Yahya Kurnianto - 13519141 K03
 
 ## Table of contents
@@ -25,6 +26,7 @@ GUI dibuat untuk layar 1920x1080p, diusahakan untuk menggunakan layar dengan res
 ## Deskripsi
 
 Program dibuat untuk Tugas Kecil 3 IF2211 Strategi Algoritma yang mengimplementasikan Algoritma A* untuk mencari jalur terpendek antara dua node pada Graph.
+
 Program dibuat dengan bahasa C#, dengan IDE Visual Studio 2019, diperuntukkan untuk Sistem Operasi Windows 10 dengan layar 1920x1080p.
 
 ## Compile
