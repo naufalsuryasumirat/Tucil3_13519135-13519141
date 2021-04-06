@@ -10,25 +10,25 @@ namespace Tucil3_AStar
     {
         private List<Node> nodes;
         private List<Tuple<string, string, double>> DrawInfo;
-        public Graph()
+        public Graph() // Default constructor dari Graph
         {
             this.nodes = new List<Node>();
             this.DrawInfo = new List<Tuple<string, string, double>>();
         }
-        public Graph(List<Node> nodes)
+        public Graph(List<Node> nodes) // User-defined constructor dari List<Node> yang sudah ada
         {
             this.nodes = nodes;
             this.DrawInfo = new List<Tuple<string, string, double>>();
         }
-        public List<Node> getNodes()
+        public List<Node> getNodes() // Getter list Node yang terdapat pada Graph
         {
             return this.nodes;
         }
-        public List<Tuple<string, string, double>> getDrawInfo()
+        public List<Tuple<string, string, double>> getDrawInfo() // Getter Info untuk menggambar Graph pada MSAGL viewer dan pada GoogleMaps
         {
             return this.DrawInfo;
         }
-        public void addConnection(int from, int to)
+        public void addConnection(int from, int to) // Method menambah koneksi pada Node yang terdapat dalam graph (input indeks dua node pada graph)
         {
             if ((from > this.nodes.Count || from < 0) || (to > this.nodes.Count || to < 0) || (from == to)) return;
             var t1 = new Tuple<string, string, double>(nodes[from].getName(), nodes[to].getName(), nodes[from].calcHaversine(nodes[to]));
@@ -36,13 +36,13 @@ namespace Tucil3_AStar
             if (!this.DrawInfo.Contains(t1) && !this.DrawInfo.Contains(t2)) { this.DrawInfo.Add(t1); }
             this.nodes[from].addConnection(this.nodes[to]);
         }
-        public void addNode(Node node)
+        public void addNode(Node node) // Method menambah node pada graph
         {
             if (findNode(node.getName()) != null) return;
             this.nodes.Add(node);
             this.DrawInfo.Add(new Tuple<string, string, double>(node.getName(), null, 0.0));
         }
-        public Node findNode(string name)
+        public Node findNode(string name) // Method mencari Node berdasarkan nama node, null jika tidak ditemukan
         {
             foreach (Node node in this.nodes)
             {
@@ -50,14 +50,14 @@ namespace Tucil3_AStar
             }
             return null;
         }
-        public void printInfo()
+        public void printInfo() // Menampilkan informasi mengenai Graph, untuk debugging
         {
             foreach (Node node in this.nodes)
             {
                 node.printInfo();
             }
         }
-        public void printNames()
+        public void printNames() // Menampilkan nama node yang terdapat pada graph, untuk debugging
         {
             for (int i = 0; i < this.nodes.Count; i++)
             {
@@ -66,14 +66,16 @@ namespace Tucil3_AStar
                 else Console.Write(", ");
             }
         }
-        public void printDrawInfo()
+        public void printDrawInfo() // Menampilkan Info yang digunakan untuk digambar, untuk debugging
         {
             foreach (Tuple<string, string, double> tp in this.DrawInfo)
             {
                 Console.WriteLine("(" + tp.Item1 + ", " + tp.Item2 + ", " + tp.Item3 + ")");
             }
         }
+        // Algoritma AStar yang digunakan untuk mencari jalur terpendek antar dua node yang terdapat pada Graph
         public Tuple<List<string>, double, double> AStar(string from, string to)
+        
         {
             Node GoalNode = findNode(to);
             Node InitialNode = findNode(from);
@@ -121,7 +123,7 @@ namespace Tucil3_AStar
             }
             return null; // Tidak ditemukan path
         }
-        public int findIndexWithCoor(double latitude, double longitude)
+        public int findIndexWithCoor(double latitude, double longitude) // Method mencari index Node pada graph dengan input koordinat (latitutde, longitude), mengembalikan -1 jika tidak ditemukan
         {
             for (int i = 0; i < this.nodes.Count; i++)
             {

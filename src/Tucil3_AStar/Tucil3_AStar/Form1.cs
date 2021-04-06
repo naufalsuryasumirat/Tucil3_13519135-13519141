@@ -22,17 +22,17 @@ namespace Tucil3_AStar
                 return Value;
             }
         }
-        private Graph OG;
-        private Microsoft.Msagl.Drawing.Graph GDraw;
+        private Graph OG; // Kelas Graph
+        private Microsoft.Msagl.Drawing.Graph GDraw; // Graph MSAGL untuk digambar
         private string initialNode; // Node awal pencarian jalur
         private string goalNode; // Node yang dituju pencarian jalur
         private List<ItemCombo> startList; // List akun untuk pilihan Initial Node saat ini
         private List<ItemCombo> goalList; // List akun untuk pilihan Goal Node saat ini
         private List<Tuple<double, double>> markerList; // Maksimal berisi dua untuk menambahkan koneksi antar dua node pada Google Maps
         private List<Tuple<double, double>> pathList; // Maksimal berisi dua untuk mencari jalur terpendek antar dua node pada Google Maps
-        private bool mapOnly;
-        private int nodeMapCount;
-        void AddUndirectedEdge(Microsoft.Msagl.Drawing.Graph graphs, string source, string target, double distance)
+        private bool mapOnly; // Boolean penanda pemilihan hanya menggunakan GMap
+        private int nodeMapCount; // Jumlah Node map pada GMap yang dibuat
+        void AddUndirectedEdge(Microsoft.Msagl.Drawing.Graph graphs, string source, string target, double distance) // Membuat edge tanpa arah dengan weight sebesar distance pada MSAGL viewer
         {
             var Edge = graphs.AddEdge(source, target);
             Edge.Attr.ArrowheadAtTarget = Microsoft.Msagl.Drawing.ArrowStyle.None;
@@ -139,11 +139,25 @@ namespace Tucil3_AStar
                 }
                 gdi.Graph = graphs;
 
+                // Menggambar rute pada Google Maps (Dianimasikan)
+                List<GMap.NET.PointLatLng> listPoints = new List<GMap.NET.PointLatLng>();
+                Node from = this.OG.findNode(list[i]);
+                Node to = this.OG.findNode(list[i + 1]);
+                listPoints.Add(new GMap.NET.PointLatLng(from.getLatitude(), from.getLongitude()));
+                listPoints.Add(new GMap.NET.PointLatLng(to.getLatitude(), to.getLongitude()));
+                GMap.NET.WindowsForms.GMapOverlay routeOverlay = new GMap.NET.WindowsForms.GMapOverlay("routeOverlay");
+                GMap.NET.WindowsForms.GMapRoute routeAdd = new GMap.NET.WindowsForms.GMapRoute(listPoints, "");
+                routeAdd.Stroke = new Pen(Color.Red, 5);
+                routeOverlay.Routes.Add(routeAdd);
+                gMap.Overlays.Add(routeOverlay);
+                gMap.Zoom -= 1; // Reset agar tampilan Gmaps benar
+                gMap.Zoom += 1;
+
                 Wait(1500); // menunggu 1.5 detik
             }
-            // Menggambar pada Google Maps
+            // Menggambar rute pada Google Maps
+            /*
             List<GMap.NET.PointLatLng> listPoints = new List<GMap.NET.PointLatLng>();
-            // Memperlihatkan pada GMap
             foreach (string str in list)
             {
                 Node find = this.OG.findNode(str);
@@ -151,13 +165,14 @@ namespace Tucil3_AStar
             }
             GMap.NET.WindowsForms.GMapOverlay routeOverlay = new GMap.NET.WindowsForms.GMapOverlay("routeOverlay");
             GMap.NET.WindowsForms.GMapRoute routeAdd = new GMap.NET.WindowsForms.GMapRoute(listPoints, "");
-            routeAdd.Stroke = new Pen(Color.Red, 4);
+            routeAdd.Stroke = new Pen(Color.Red, 5);
             routeOverlay.Routes.Add(routeAdd);
             gMap.Overlays.Add(routeOverlay);
             gMap.Zoom -= 1; // Reset agar tampilan Gmaps benar
             gMap.Zoom += 1;
+            */
         }
-        void DrawGraph(Microsoft.Msagl.Drawing.Graph graphs, List<Tuple<string, string, double>> list)
+        void DrawGraph(Microsoft.Msagl.Drawing.Graph graphs, List<Tuple<string, string, double>> list) // Menggambarkan graph dari pembacaan file (pada GMap dan pada MSAGL viewer)
         {
             foreach (var tuple in list)
             {
@@ -176,8 +191,17 @@ namespace Tucil3_AStar
                 routeOverlay.Routes.Add(routeAdd);
                 gMap.Overlays.Add(routeOverlay);
             }
+            // Setting up Google Maps Marker
+            GMap.NET.WindowsForms.GMapOverlay mapOverlay = new GMap.NET.WindowsForms.GMapOverlay("mapOverlay");
+            foreach (var node in OG.getNodes())
+            {
+                GMap.NET.PointLatLng Point = new GMap.NET.PointLatLng(node.getLatitude(), node.getLongitude());
+                GMap.NET.WindowsForms.GMapMarker mapMarker = new GMap.NET.WindowsForms.Markers.GMarkerGoogle(Point, GMap.NET.WindowsForms.Markers.GMarkerGoogleType.red);
+                mapOverlay.Markers.Add(mapMarker);
+            }
+            gMap.Overlays.Add(mapOverlay);
         }
-        void InitializeComboItems(List<ItemCombo> list1, List<ItemCombo> list2, Graph graph)
+        void InitializeComboItems(List<ItemCombo> list1, List<ItemCombo> list2, Graph graph) // Prosedur menginisialisasikan pemilihan combo items
         {
             foreach (var node in graph.getNodes())
             {
@@ -222,6 +246,7 @@ namespace Tucil3_AStar
                 FileHandler f = new FileHandler(fileToOpen);
                 // this.OG = new Classes.Graph(fileToOpen);
                 this.OG = f.getGraph();
+                gMap.Overlays.Clear();
                 DrawGraph(this.GDraw, OG.getDrawInfo());
                 gViewer1.Graph = this.GDraw;
                 gViewer1.OutsideAreaBrush = Brushes.White;
@@ -235,15 +260,7 @@ namespace Tucil3_AStar
                 goalList = new List<ItemCombo>();
                 InitializeComboItems(startList, goalList, OG);
 
-                // Setting up Google Maps
-                GMap.NET.WindowsForms.GMapOverlay mapOverlay = new GMap.NET.WindowsForms.GMapOverlay("mapOverlay");
-                foreach (var node in OG.getNodes())
-                {
-                    GMap.NET.PointLatLng Point = new GMap.NET.PointLatLng(node.getLatitude(), node.getLongitude());
-                    GMap.NET.WindowsForms.GMapMarker mapMarker = new GMap.NET.WindowsForms.Markers.GMarkerGoogle(Point, GMap.NET.WindowsForms.Markers.GMarkerGoogleType.orange_small);
-                    mapOverlay.Markers.Add(mapMarker);
-                }
-                gMap.Overlays.Add(mapOverlay);
+                // Memindahkan posisi Map
                 gMap.Position = new GMap.NET.PointLatLng(OG.getNodes()[0].getLatitude(), OG.getNodes()[0].getLongitude());
             }
         }
@@ -279,6 +296,7 @@ namespace Tucil3_AStar
         {
             if (this.OG == null || this.GDraw == null) return;
             this.GDraw = new Microsoft.Msagl.Drawing.Graph("graph");
+            gMap.Overlays.Clear(); // TEST
             DrawGraph(this.GDraw, OG.getDrawInfo());
             gViewer1.Graph = this.GDraw;
             gViewer1.OutsideAreaBrush = Brushes.White;
@@ -286,21 +304,23 @@ namespace Tucil3_AStar
             this.initialNode = null;
             this.goalNode = null;
             lbl_Content.Text = "";
+            gMap.Zoom -= 1;
+            gMap.Zoom += 1;
         }
 
-        private void btn_Pan_Click(object sender, EventArgs e)
+        private void btn_Pan_Click(object sender, EventArgs e) // Mengaktifkan mode pan pada MSAGL viewer
         {
             gViewer1.PanButtonPressed = !(gViewer1.PanButtonPressed);
             if (gViewer1.PanButtonPressed) { btn_Pan.ForeColor = Color.FromArgb(255, 68, 71, 90); btn_Pan.BackColor = Color.FromArgb(255, 255, 121, 198); }
             else { btn_Pan.ForeColor = Color.FromArgb(255, 255, 121, 198); btn_Pan.BackColor = Color.FromArgb(255, 40, 42, 54); }
         }
 
-        private void btn_Goal_Click(object sender, EventArgs e)
+        private void btn_Goal_Click(object sender, EventArgs e) // Event btn_Goal di klik, memperlihatkan/menutup pilihan goalNode
         {
             cmb_Goal.Visible = !cmb_Goal.Visible;
         }
 
-        private void cmb_Goal_SelectedIndexChanged(object sender, EventArgs e)
+        private void cmb_Goal_SelectedIndexChanged(object sender, EventArgs e) // Event memilih pilihan pada goalNode
         {
             if (goalNode != null)
             {
@@ -312,7 +332,7 @@ namespace Tucil3_AStar
             gViewer1.Graph = GDraw;
         }
 
-        private void btn_FindPath_Click(object sender, EventArgs e)
+        private void btn_FindPath_Click(object sender, EventArgs e) // Event tombol FindPath di klik (melakukan pencarian path pada kelas graph dan diperlihatkan pada GMap dan MSAGL viewer)
         {
             if (initialNode == null || goalNode == null) return;
             var Result = OG.AStar(initialNode, goalNode);
@@ -328,7 +348,7 @@ namespace Tucil3_AStar
             lbl_Content.Text += ("Distance: " + Result.Item2 + "\n");
         }
 
-        private void gMap_Load(object sender, EventArgs e)
+        private void gMap_Load(object sender, EventArgs e) // Event GMap di load
         {
             gMap.MapProvider = GMap.NET.MapProviders.GoogleMapProvider.Instance;
             GMap.NET.GMaps.Instance.Mode = GMap.NET.AccessMode.ServerOnly;
@@ -343,7 +363,7 @@ namespace Tucil3_AStar
             gMap.DragButton = MouseButtons.Left;
             gMap.MouseClick += new MouseEventHandler(gMap_MouseClick);
         }
-        private void gMap_MouseClick(object sender, MouseEventArgs e)
+        private void gMap_MouseClick(object sender, MouseEventArgs e) // Event klik kanan pada GMap (Menambahkan marker baru pada GMap dan pada kelas Graph)
         {
             if (e.Button == System.Windows.Forms.MouseButtons.Right)
             { 
@@ -351,27 +371,24 @@ namespace Tucil3_AStar
                 double longitude = gMap.FromLocalToLatLng(e.X, e.Y).Lng;
                 var Point = new GMap.NET.PointLatLng(latitude, longitude);
                 lbl_Content.Text = "Marker Added with Coordinates:\n";
-                lbl_Content.Text += "Latitude\t: " + latitude + "\n"; // TEST
-                lbl_Content.Text += "Longitude\t: " + longitude + "\n"; // TEST
-                GMap.NET.WindowsForms.GMapOverlay mapOverlay = new GMap.NET.WindowsForms.GMapOverlay("mapOverlay");
-                GMap.NET.WindowsForms.GMapMarker mapMarker = new GMap.NET.WindowsForms.Markers.GMarkerGoogle(Point, GMap.NET.WindowsForms.Markers.GMarkerGoogleType.red);
-                mapOverlay.Markers.Add(mapMarker);
-                gMap.Overlays.Add(mapOverlay);
-                gMap.Zoom -= 1;
-                gMap.Zoom += 1;
+                lbl_Content.Text += "Latitude\t: " + latitude + "\n";
+                lbl_Content.Text += "Longitude\t: " + longitude + "\n";
                 string newNodeName = ("node" + this.nodeMapCount);
                 this.nodeMapCount++;
                 this.OG.addNode(new Node(newNodeName, new Tuple<double, double>(Point.Lat, Point.Lng)));
                 this.GDraw = new Microsoft.Msagl.Drawing.Graph("graph");
+                gMap.Overlays.Clear();
                 DrawGraph(this.GDraw, OG.getDrawInfo());
                 gViewer1.Graph = this.GDraw;
                 gViewer1.OutsideAreaBrush = Brushes.White;
                 this.startList = new List<ItemCombo>();
                 this.goalList = new List<ItemCombo>();
                 InitializeComboItems(this.startList, this.goalList, this.OG);
+                gMap.Zoom -= 1;
+                gMap.Zoom += 1;
             }
         }
-        private void btn_MapOnly_Click(object sender, EventArgs e)
+        private void btn_MapOnly_Click(object sender, EventArgs e) // Event menekan tombol MapOnly (Mengganti mode untuk menggunakan hanya GMap)
         {
             btn_Browse.Enabled = !btn_Browse.Enabled;
             this.mapOnly = !this.mapOnly;
@@ -397,7 +414,7 @@ namespace Tucil3_AStar
             gMap.Zoom += 1;
         }
 
-        private void gMap_OnMarkerDoubleClick(GMap.NET.WindowsForms.GMapMarker item, MouseEventArgs e)
+        private void gMap_OnMarkerDoubleClick(GMap.NET.WindowsForms.GMapMarker item, MouseEventArgs e) // Event Marker ditekan dua kali pada GMap (Menambahkan koneksi antar dua node)
         {
             if (this.markerList.Count < 1)
             {
@@ -411,6 +428,7 @@ namespace Tucil3_AStar
                 else return;
                 this.OG.addConnection(OG.findIndexWithCoor(markerList[0].Item1, markerList[0].Item2), OG.findIndexWithCoor(markerList[1].Item1, markerList[1].Item2));
                 this.GDraw = new Microsoft.Msagl.Drawing.Graph("graph");
+                gMap.Overlays.Clear();
                 DrawGraph(this.GDraw, OG.getDrawInfo());
                 gViewer1.Graph = this.GDraw;
                 List<GMap.NET.PointLatLng> listPoints = new List<GMap.NET.PointLatLng>();
@@ -427,7 +445,7 @@ namespace Tucil3_AStar
             }
         }
 
-        private void gMap_OnMarkerClick(GMap.NET.WindowsForms.GMapMarker item, MouseEventArgs e)
+        private void gMap_OnMarkerClick(GMap.NET.WindowsForms.GMapMarker item, MouseEventArgs e) // Event Marker di klik (Middle Click), dan menjalankan pencarian path antar dua node
         {
             if (e.Button != System.Windows.Forms.MouseButtons.Middle) return;
             if (pathList.Count < 1)

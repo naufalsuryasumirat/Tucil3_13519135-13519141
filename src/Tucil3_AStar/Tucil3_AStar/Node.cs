@@ -8,9 +8,9 @@ namespace Tucil3_AStar
 {
     public class Node
     {
-        private string Name;
-        private Tuple<double, double> Coordinate;
-        private List<Tuple<Node, double>> CNodes;
+        private string Name; // Identitas Node
+        private Tuple<double, double> Coordinate; // Koordinat Node (Latitude, Longitude)
+        private List<Tuple<Node, double>> CNodes; // List Tuple Node dengan jarak ke node tersebut (node tetangga)
         public Node() // Default constructor
         {
             this.Name = null;
@@ -35,15 +35,15 @@ namespace Tucil3_AStar
         {
             return this.Coordinate;
         }
-        public double getLatitude()
+        public double getLatitude() // Getter Latitude dari Tuple<double, double> (Bagian pertama dari tuple)
         {
             return this.Coordinate.Item1;
         }
-        public double getLongitude()
+        public double getLongitude() // Getter Longitude dari Tuple<double, double> (Bagian kedua dari tuple)
         {
             return this.Coordinate.Item2;
         }
-        public void sortConnected() // Method untuk mengurutkan connected nodes
+        public void sortConnected() // Method untuk mengurutkan connected nodes, sort berdasarkan distance menaik
         {
             this.CNodes.Sort((x, y) => x.Item2.CompareTo(y.Item2));
         }
@@ -60,7 +60,7 @@ namespace Tucil3_AStar
             double distance = radius * c;
             return Math.Round(distance, 2);
         }
-        public void addConnection(Node other)
+        public void addConnection(Node other) // Menambah koneksi dengan Node lain
         {
             if (this.getName() == other.getName()) return; // Guard agar tidak menambah koneksi ke diri sendiri
             foreach (Tuple<Node, double> tp in this.CNodes)
@@ -73,7 +73,7 @@ namespace Tucil3_AStar
             this.sortConnected();
             other.sortConnected();
         }
-        public void printInfo()
+        public void printInfo() // Menampilkan informasi mengenai Node, untuk debugging
         {
             Console.WriteLine("Name\t: " + this.Name);
             Console.WriteLine("Coor\t: " + "(" + this.Coordinate.Item1 + ", " + this.Coordinate.Item2 + ")");
