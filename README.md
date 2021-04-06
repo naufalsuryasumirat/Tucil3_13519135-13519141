@@ -18,7 +18,7 @@ Program dibuat dengan bahasa C#, dengan IDE Visual Studio 2019, diperuntukkan un
 
 ## Compile
 
-Jika ingin meng-compile ulang program, gunakan IDE Visual Studio 2019 dengan package sebagai berikut: GMap.NET.Core, GMap.NET.WinForms, 
+Jika ingin meng-compile ulang program, gunakan IDE Visual Studio 2019 dengan package sebagai berikut: GMap.NET.Core, GMap.NET.WinForms, Microsoft.Msagl, Microsoft.Msagl.Drawing, Microsoft.Msagl.GraphViewerGDI.
 
 ## Menjalankan aplikasi
 
